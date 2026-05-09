@@ -1,0 +1,59 @@
+// TaskFlow database schema
+// Sesuai ERD di docs/Laporan Proyek.pdf section 2.4
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @id @default(autoincrement()) @map("id_user")
+  nama       String     @db.VarChar(100)
+  email      String     @unique @db.VarChar(150)
+  password   String     @db.VarChar(255)
+  createdAt  DateTime   @default(now()) @map("created_at")
+
+  tasks      Task[]
+  categories Category[]
+
+  @@map("users")
+}
+
+model Category {
+  id           Int    @id @default(autoincrement()) @map("id_category")
+  namaCategory String @map("nama_category") @db.VarChar(100)
+  userId       Int    @map("id_user")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@map("categories")
+}
+
+model Task {
+  id         Int        @id @default(autoincrement()) @map("id_task")
+  judul      String     @db.VarChar(200)
+  deskripsi  String?    @db.Text
+  deadline   DateTime?  @db.Date
+  status     TaskStatus @default(BELUM)
+  userId     Int        @map("id_user")
+  categoryId Int?       @map("id_category")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([categoryId])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  BELUM
+  SELESAI
+}
