@@ -1,13 +1,9 @@
-import {
-    FiEdit2,
-    FiTrash2,
-} from "react-icons/fi";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function TaskCard({
-    task,
-    onToggleComplete,
-    onDelete,
-}) {
+function TaskCard({ task, onToggleComplete, onDelete, }) {
+    const navigate = useNavigate();
 
     return (
         <div
@@ -93,7 +89,12 @@ function TaskCard({
             {/* RIGHT */}
             <div className="flex items-center gap-3 shrink-0">
 
-                <button className="hover:scale-110 transition">
+                <button
+                    onClick={() =>
+                        navigate(`/edit-task/${task.id}`)
+                    }
+                    className="hover:scale-110 transition"
+                >
                     <FiEdit2 size={20} />
                 </button>
 

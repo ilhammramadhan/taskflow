@@ -1,59 +1,23 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { TaskContext } from "../context/TaskContext";
 import TaskCard from "../components/TaskCard";
+import DeleteModal from "../components/DeleteModal";
 
 function DashboardPage() {
 
-    // Simulasi user login
-    const currentUser = "user123";
-
-    const initialTasks = [
-        {
-            id: 1,
-            user: "user123",
-            title: "Belajar Matematika",
-            category: "School",
-            deadline: "",
-            completed: false,
-        },
-        {
-            id: 2,
-            user: "user123",
-            title: "Tugas Melukis",
-            category: "School",
-            deadline: "April 1, 2026",
-            completed: true,
-        },
-        {
-            id: 3,
-            user: "user123",
-            title: "Mencuci Sepatu",
-            category: "Personal",
-            deadline: "",
-            completed: false,
-        },
-        {
-            id: 4,
-            user: "anotherUser",
-            title: "Hidden Task",
-            category: "Work",
-            deadline: "",
-            completed: false,
-        },
-    ];
-
-    const [tasks, setTasks] = useState(initialTasks);
+    const {
+        tasks,
+        toggleTask,
+        deleteTask,
+        updateTask
+    } = useContext(TaskContext);
 
     const [categoryFilter, setCategoryFilter] = useState("All");
 
     const [deadlineFilter, setDeadlineFilter] = useState("All");
 
-    // Filter task sesuai user login
-    const userTasks = tasks.filter(
-        (task) => task.user === currentUser
-    );
-
     // Filter category + deadline
-    const filteredTasks = userTasks.filter((task) => {
+    const filteredTasks = tasks.filter((task) => {
 
         const categoryMatch =
         categoryFilter === "All" ||
@@ -71,29 +35,10 @@ function DashboardPage() {
         return categoryMatch && deadlineMatch;
     });
 
-    // Toggle complete
-    const handleToggleComplete = (id) => {
-        setTasks((prev) =>
-        prev.map((task) =>
-            task.id === id
-            ? {
-                ...task,
-                completed: !task.completed,
-                }
-            : task
-        )
-        );
-    };
-
-    // Delete task
-    const handleDelete = (id) => {
-        setTasks((prev) =>
-        prev.filter((task) => task.id !== id)
-        );
-    };
+    const [deleteId, setDeleteId] = useState(null);
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="w-full max-w-6xl flex flex-col gap-6">
 
             {/* Title */}
             <div>
@@ -168,8 +113,9 @@ function DashboardPage() {
                     <TaskCard
                         key={task.id}
                         task={task}
-                        onToggleComplete={handleToggleComplete}
-                        onDelete={handleDelete}
+                        onToggleComplete={toggleTask}
+                        onDelete={(id) => setDeleteId(id)}
+                        onUpdate={updateTask}
                     />
                 ))}
 
@@ -180,6 +126,15 @@ function DashboardPage() {
                 )}
 
             </div>
+
+            <DeleteModal
+                open={deleteId !== null}
+                onClose={() => setDeleteId(null)}
+                onConfirm={() => {
+                    deleteTask(deleteId);
+                    setDeleteId(null);
+                }}
+            />
 
         </div>
     );
