@@ -4,11 +4,15 @@
   "private": true,
   "description": "TaskFlow backend — Express + TypeScript + Prisma",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "prisma:generate": "prisma generate",
+    "start:migrate": "prisma migrate deploy && node dist/index.js",
+    "postinstall": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "typecheck": "tsc --noEmit"
