@@ -2,7 +2,10 @@
 
 Aplikasi manajemen tugas berbasis web. Tugas Kelompok 1 — Software Engineering, Binus University Online Learning.
 
-> Spesifikasi lengkap ada di [`docs/Laporan Proyek.pdf`](./docs/Laporan%20Proyek.pdf).
+> 📘 **Spesifikasi**: [`docs/Laporan Proyek.pdf`](./docs/Laporan%20Proyek.pdf)
+> 🔌 **API spec untuk tim FE**: [`docs/API.md`](./docs/API.md) + [`docs/postman_collection.json`](./docs/postman_collection.json)
+> 🚀 **Deploy guide**: [`docs/DEPLOY.md`](./docs/DEPLOY.md)
+> 🌐 **Production backend**: https://taskflow-e0yh.onrender.com
 
 ---
 
