@@ -1,57 +1,16 @@
-# TaskFlow Frontend
+# React + Vite
 
-React + Vite + TypeScript + Tailwind CSS.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Setup
+Currently, two official plugins are available:
 
-```bash
-cp .env.example .env       # set VITE_API_URL (default: http://localhost:4000/api)
-npm install
-npm run dev
-```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-App jalan di `http://localhost:5173`.
+## React Compiler
 
-> Pastikan backend (`/backend`) sudah jalan di port 4000 sebelum start frontend.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Scripts
+## Expanding the ESLint configuration
 
-| Command | Untuk |
-|---|---|
-| `npm run dev` | Vite dev server dengan HMR |
-| `npm run build` | Build produksi ke `dist/` |
-| `npm run preview` | Preview build hasil compile |
-| `npm run typecheck` | Cek TypeScript tanpa build |
-
-## Struktur Folder
-
-```
-frontend/
-├── index.html
-├── src/
-│   ├── main.tsx              Entry — mount app
-│   ├── App.tsx               Routing
-│   ├── index.css             Tailwind base
-│   ├── api/client.ts         Axios instance + auth interceptor
-│   ├── contexts/AuthContext  User & token state
-│   ├── components/
-│   │   ├── Layout.tsx        Header + sidebar
-│   │   └── ProtectedRoute.tsx
-│   └── pages/
-│       ├── Login.tsx
-│       ├── Register.tsx
-│       ├── Dashboard.tsx     Task list + filter
-│       ├── CreateTask.tsx
-│       ├── EditTask.tsx
-│       └── Categories.tsx
-├── tailwind.config.js
-└── vite.config.ts
-```
-
-## Color Palette (sesuai mockup di laporan)
-
-- `primary` — `#F47B3F` (oranye, untuk title & accent)
-- `secondary` — `#7FB6CC` (biru muda, untuk button & border)
-- `cream` — `#FAF3E0` (background)
-
-Pakai class Tailwind: `bg-primary`, `text-secondary`, `border-cream`, dst.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
