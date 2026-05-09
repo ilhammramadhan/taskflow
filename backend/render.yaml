@@ -1,0 +1,23 @@
+# Render Blueprint — auto-deploy config
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: taskflow-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:migrate
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Sensitive vars — set manually in Render dashboard:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: http://localhost:5173
