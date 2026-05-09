@@ -1,41 +1,83 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { TaskContext } from "../context/TaskContext";
+import { CategoryContext } from "../context/CategoryContext";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
-function TaskForm() {
+function TaskForm({ editTask = null }) {
 
-    // Simulasi category dari database
-    const categories = [
-        "School",
-        "Personal",
-        "Work",
-    ];
+    const { categories } = useContext(CategoryContext);
+
+    const { addTask, updateTask } = useContext(TaskContext);
+
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        category: "",
-        hasDeadline: false,
-        deadline: "",
+        title: editTask?.title || "",
+        description: editTask?.description || "",
+        category: editTask?.category || "",
+        hasDeadline: !!editTask?.deadline,
+        deadline: editTask?.deadline || "",
     });
 
     const handleChange = (e) => {
-
         const { name, value, type, checked } = e.target;
 
-        setFormData({
-            ...formData,
+        setFormData((prev) => ({
+            ...prev,
             [name]:
                 type === "checkbox"
-                ? checked
-                : value,
-        });
+                    ? checked
+                    : value,
+        }));
     };
 
     const handleSubmit = (e) => {
+
         e.preventDefault();
 
-        console.log(formData);
+        const taskData = {
+            title: formData.title,
+            description: formData.description,
+            category: formData.category,
+            deadline: formData.hasDeadline
+                ? formData.deadline
+                : "",
+        };
 
-        alert("Task Created!");
+        // EDIT TASK
+        if (editTask) {
+
+            updateTask(
+                editTask.id,
+                taskData
+            );
+
+            toast.success(
+                "Task updated!"
+            );
+
+        } else {
+
+            // CREATE TASK
+            addTask(taskData);
+
+            toast.success(
+                "Task created!"
+            );
+        }
+
+        // Reset Form
+        setFormData({
+            title: "",
+            description: "",
+            category: "",
+            hasDeadline: false,
+            deadline: "",
+        });
+
+        // Redirect
+        navigate("/dashboard");
     };
 
     return (
@@ -43,7 +85,6 @@ function TaskForm() {
             onSubmit={handleSubmit}
             className="
                 w-full
-                max-w-4xl
                 flex flex-col gap-5
             "
         >
@@ -122,10 +163,10 @@ function TaskForm() {
 
                     {categories.map((category) => (
                         <option
-                            key={category}
-                            value={category}
+                            key={category.id}
+                            value={category.name}
                         >
-                            {category}
+                            {category.name}
                         </option>
                     ))}
 
@@ -133,7 +174,7 @@ function TaskForm() {
 
             </div>
 
-            {/* Deadline Checkbox */}
+            {/* Deadline */}
             <div className="grid grid-cols-[120px_1fr] items-center gap-4">
 
                 <label className="text-lg">
@@ -142,13 +183,18 @@ function TaskForm() {
 
                 <div>
 
-                <input
-                    type="checkbox"
-                    name="hasDeadline"
-                    checked={formData.hasDeadline}
-                    onChange={handleChange}
-                    className="w-7 h-7 accent-black"
-                />
+                    <input
+                        type="checkbox"
+                        name="hasDeadline"
+                        checked={
+                            formData.hasDeadline
+                        }
+                        onChange={handleChange}
+                        className="
+                            w-6 h-6
+                            accent-black
+                        "
+                    />
 
                 </div>
 
@@ -169,10 +215,10 @@ function TaskForm() {
                         value={formData.deadline}
                         onChange={handleChange}
                         className="
-                        border-4 border-[#8bbcd3]
-                        bg-white
-                        px-4 py-2
-                        outline-none
+                            border-4 border-[#8bbcd3]
+                            bg-white
+                            px-4 py-2
+                            outline-none
                         "
                     />
 

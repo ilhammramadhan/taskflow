@@ -1,12 +1,8 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { Outlet, NavLink } from "react-router-dom";
-import {
-    FiMenu,
-    FiLogOut,
-    FiGrid,
-    FiCheckSquare,
-    FiTag,
-} from "react-icons/fi";
+import { FiMenu, FiLogOut, FiGrid, FiCheckSquare, FiTag } from "react-icons/fi";
+import { AuthContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 function DashboardLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -28,6 +24,16 @@ function DashboardLayout() {
             : "hover:bg-white/40"
         }
     `;
+
+    const { logout, currentUser } = useContext(AuthContext);
+
+    const handleLogout = () => {
+        logout();
+
+        toast.success(
+            "Logout success!"
+        );
+    };
 
     return (
         <div className="min-h-screen bg-[#f3efe9]">
@@ -65,10 +71,18 @@ function DashboardLayout() {
                     <div className="flex items-center gap-3">
 
                         <p className="hidden sm:block text-sm">
-                            Hello, user123!
+                            Hello, {currentUser?.username}!
                         </p>
 
-                        <button className="flex items-center justify-center">
+                        <button
+                            onClick={handleLogout}
+                            className="
+                                flex items-center
+                                justify-center
+                                hover:scale-110
+                                transition
+                            "
+                        >
                             <FiLogOut size={20} />
                         </button>
 
