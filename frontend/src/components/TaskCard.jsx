@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function TaskCard({ task, onToggleComplete, onDelete, }) {
     const navigate = useNavigate();
+    const isCompleted = task.completed;
 
     return (
         <div
@@ -20,7 +21,7 @@ function TaskCard({ task, onToggleComplete, onDelete, }) {
                 transition-all duration-200
 
                 ${
-                task.completed
+                isCompleted
                     ? "bg-[#c7dfeb] border-[#8bbcd3]"
                     : "bg-white border-[#8bbcd3]"
                 }
@@ -44,13 +45,13 @@ function TaskCard({ task, onToggleComplete, onDelete, }) {
                         transition-all
 
                         ${
-                        task.completed
+                        isCompleted
                             ? "bg-white"
                             : "bg-transparent"
                         }
                     `}
                 >
-                    {task.completed && (
+                    {isCompleted && (
                         <span className="text-xs font-bold">
                         ✓
                         </span>
@@ -67,19 +68,19 @@ function TaskCard({ task, onToggleComplete, onDelete, }) {
                     break-words
 
                     ${
-                        task.completed
+                        isCompleted
                         ? "line-through text-gray-500"
                         : "text-orange-500"
                     }
                     `}
                 >
-                    {task.title}
+                    {task.judul}
                 </h2>
 
                 <p className="text-sm text-gray-700 mt-2 break-words">
-                    Category: {task.category}
+                    Category: {task.category?.namaCategory || "-"}
                     {" | "}
-                    Deadline: {task.deadline || "-"}
+                    Deadline: {task.deadline ? task.deadline.split("T")[0] : "-"}
                 </p>
 
                 </div>

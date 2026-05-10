@@ -1,57 +1,81 @@
-import { useContext, useState } from "react";
+import { useState, useEffect } from "react";
 import { FiTrash2 } from "react-icons/fi";
-import { CategoryContext } from "../context/CategoryContext";
-import { TaskContext } from "../context/TaskContext";
 import DeleteModal from "../components/DeleteModal";
 import toast from "react-hot-toast";
+import axios from "../utils/axios";
 
 function CategoryPage() {
+  useEffect(() => {
+    document.title = "Category - TaskFlow";
+    fetchCategories();
+    fetchTasks();
+  }, []);
 
-  const { categories, addCategory, deleteCategory } = useContext(CategoryContext);
-
+  const [categories, setCategories] = useState([]);
   const [categoryInput, setCategoryInput] = useState("");
-
   const [deleteCategoryName, setDeleteCategoryName] = useState(null);
 
-  const { tasks } = useContext(TaskContext);
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get("/categories");
+      setCategories(res.data.data); 
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const [tasks, setTasks] = useState([]);
+  const fetchTasks = async () => {
+    try {
+      const res = await axios.get("/tasks");
+
+      setTasks(res.data.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // Add Category
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
 
-    if (!categoryInput.trim())
-      return;
+    if (!categoryInput.trim()) return;
 
-    addCategory(categoryInput);
+    try {
+      await axios.post("/categories", {
+        namaCategory: categoryInput,
+      });;
 
-    toast.success("Category added!");
+      toast.success("Category added!");
+      setCategoryInput("");
 
-    setCategoryInput("");
+      fetchCategories(); // refresh list
+
+    } catch (err) {
+      toast.error("Gagal tambah category");
+    }
   };
 
   // Delete Category
-  const handleDeleteCategory = (categoryId) => {
-
-    // cari category berdasarkan id
-    const category = categories.find(
-      (cat) => cat.id === categoryId
-    );
-
-    // cek apakah dipakai task
+  const handleDeleteCategory = async (categoryId) => {
     const isUsed = tasks.some(
-      (task) =>
-        task.category === category.name
+      (task) => task.category?.id === categoryId
     );
 
     if (isUsed) {
-      toast.error(
-        "Category is still used by a task."
-      );
+      toast.error("Category is still used by a task.");
       return;
     }
 
-    deleteCategory(categoryId);
+    try {
+      await axios.delete(`/categories/${categoryId}`);
 
-    toast.success("Category deleted!");
+      toast.success("Category deleted!");
+
+      await fetchCategories();
+      await fetchTasks();
+    } catch (err) {
+      toast.error("Gagal delete category");
+    }
   };
 
   return (
@@ -119,7 +143,7 @@ function CategoryPage() {
           >
 
             <span className="text-2xl font-medium">
-              {category.name}
+              {category.namaCategory}
             </span>
 
             <button

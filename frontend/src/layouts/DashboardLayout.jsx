@@ -25,7 +25,7 @@ function DashboardLayout() {
         }
     `;
 
-    const { logout, currentUser } = useContext(AuthContext);
+    const { logout, user } = useContext(AuthContext);
 
     const handleLogout = () => {
         logout();
@@ -71,7 +71,7 @@ function DashboardLayout() {
                     <div className="flex items-center gap-3">
 
                         <p className="hidden sm:block text-sm">
-                            Hello, {currentUser?.username}!
+                            Hello, {user?.nama}!
                         </p>
 
                         <button

@@ -18,15 +18,15 @@ function DeleteModal({ open, onClose, onConfirm }) {
             {/* Modal */}
             <div
                 className="
-                bg-white
-                w-full
-                max-w-md
+                    bg-white
+                    w-full
+                    max-w-md
 
-                rounded-2xl
-                p-6
+                    rounded-2xl
+                    p-6
 
-                shadow-xl
-                animate-[fadeIn_.2s_ease]
+                    shadow-xl
+                    animate-[fadeIn_.2s_ease]
                 "
             >
 

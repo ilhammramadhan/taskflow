@@ -7,4 +7,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://taskflow-e0yh.onrender.com",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
