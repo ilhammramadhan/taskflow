@@ -1,22 +1,23 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AuthLayout from "../components/AuthLayout";
 import AuthInput from "../components/AuthInput";
 import { AuthContext } from "../context/AuthContext";
+import axios from "../utils/axios";
 
 function RegisterPage() {
+  useEffect(() => {
+    document.title = "Register - TaskFlow";
+  }, []);
 
   const navigate = useNavigate();
 
-  const { register } = useContext(AuthContext);
-
-  const [formData, setFormData] =
-    useState({
-      username: "",
-      email: "",
-      password: "",
-    });
+  const [formData, setFormData] = useState({
+    nama: "",
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e) => {
 
@@ -27,24 +28,29 @@ function RegisterPage() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
 
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const result = register(formData);
+    try {
+      await axios.post("/auth/register", {
+        nama: formData.nama,
+        email: formData.email,
+        password: formData.password,
+      });
 
-    if (!result.success) {
+      toast.success("Register success!");
+      navigate("/");
 
+    } catch (err) {
       toast.error(
-        result.message
+        err.response?.data?.message || "Register gagal"
       );
-
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    toast.success("Register success!");
-
-    navigate("/");
   };
 
   return (
@@ -59,9 +65,9 @@ function RegisterPage() {
         "
       >
         <AuthInput
-          placeholder="Username"
-          name="username"
-          value={formData.username}
+          placeholder="Name"
+          name="nama"
+          value={formData.nama}
           onChange={handleChange}
         />
 
@@ -82,16 +88,10 @@ function RegisterPage() {
 
         <button
           type="submit"
-          className="
-            bg-[#8bbcd3]
-            text-white
-            py-3
-            mt-2
-            hover:opacity-90
-            transition
-          "
+          disabled={loading}
+          className="bg-[#8bbcd3] text-white py-3 mt-2 hover:opacity-90 transition disabled:opacity-50"
         >
-          Register
+          {loading ? "Loading..." : "Register"}
         </button>
 
         <p className="text-sm text-center">

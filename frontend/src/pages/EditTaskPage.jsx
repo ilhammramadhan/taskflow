@@ -1,40 +1,35 @@
-import { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { TaskContext } from "../context/TaskContext";
+import { useEffect, useState } from "react";
 import TaskForm from "../components/TaskForm";
-import toast from "react-hot-toast";
+import axios from "../utils/axios";
 
 function EditTaskPage() {
-
     const { id } = useParams();
+    const [task, setTask] = useState(null);
 
-    const { tasks } = useContext(TaskContext);
+    useEffect(() => {
+        fetchTaskDetail();
+        document.title = "Edit Task - TaskFlow";
+    }, []);
 
-    const task = tasks.find(
-        (task) => task.id === Number(id)
-    );
+    const fetchTaskDetail = async () => {
+        try {
+            const res = await axios.get(`/tasks/${id}`);
+            setTask(res.data.data);
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
-    if (!task) {
-        return (
-            <div>
-                Task not found
-            </div>
-        );
-    }
+    if (!task) return <div>Loading...</div>;
 
     return (
         <div className="flex flex-col gap-6">
-
-        <div>
-
             <h1 className="text-3xl font-bold text-orange-500">
                 Edit Task
             </h1>
 
-        </div>
-
-        <TaskForm editTask={task} />
-
+            <TaskForm editTask={task} />
         </div>
     );
 }

@@ -1,22 +1,15 @@
 import { useContext } from "react";
-
 import { Navigate } from "react-router-dom";
-
 import { AuthContext } from "../context/AuthContext";
 
 function ProtectedRoute({ children }) {
 
-    const { currentUser } =
-        useContext(AuthContext);
+    const { user, loading } = useContext(AuthContext);
 
-    // Belum login
-    if (!currentUser) {
-        return (
-        <Navigate to="/" replace />
-        );
-    }
+    if (loading) return <div>Loading...</div>;
 
-    // Sudah login
+    if (!user) return <Navigate to="/" replace />;
+
     return children;
 }
 

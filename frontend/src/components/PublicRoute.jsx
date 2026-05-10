@@ -4,16 +4,10 @@ import { AuthContext } from "../context/AuthContext";
 
 function PublicRoute({ children }) {
 
-    const { currentUser } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
-    // Sudah login
-    if (currentUser) {
-        return (
-        <Navigate
-            to="/dashboard"
-            replace
-        />
-        );
+    if (user) {
+        return <Navigate to="/dashboard" replace />;
     }
 
     // Belum login

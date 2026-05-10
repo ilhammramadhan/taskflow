@@ -1,24 +1,49 @@
-import { useContext, useState } from "react";
-import { TaskContext } from "../context/TaskContext";
-import { CategoryContext } from "../context/CategoryContext";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import axios from "../utils/axios";
 
 function TaskForm({ editTask = null }) {
 
-    const { categories } = useContext(CategoryContext);
-
-    const { addTask, updateTask } = useContext(TaskContext);
-
-    const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
 
     const [formData, setFormData] = useState({
-        title: editTask?.title || "",
-        description: editTask?.description || "",
-        category: editTask?.category || "",
-        hasDeadline: !!editTask?.deadline,
-        deadline: editTask?.deadline || "",
+        title: "",
+        description: "",
+        category: "",
+        hasDeadline: false,
+        deadline: "",
     });
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        if (editTask) {
+            setFormData({
+                title: editTask.judul || "",
+                description: editTask.deskripsi || "",
+                category: editTask.category?.id || "",
+                hasDeadline: !!editTask.deadline,
+                deadline: editTask.deadline
+                    ? editTask.deadline.split("T")[0]
+                    : "",
+            });
+        }
+    }, [editTask]);
+
+    const fetchCategories = async () => {
+        try {
+            const res = await axios.get("/categories");
+
+            setCategories(res.data.data);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -32,52 +57,38 @@ function TaskForm({ editTask = null }) {
         }));
     };
 
-    const handleSubmit = (e) => {
-
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const taskData = {
-            title: formData.title,
-            description: formData.description,
-            category: formData.category,
-            deadline: formData.hasDeadline
-                ? formData.deadline
-                : "",
-        };
+        try {
+            const taskData = {
+                judul: formData.title,
+                deskripsi: formData.description || "",
+                deadline:
+                    formData.hasDeadline && formData.deadline
+                        ? new Date(formData.deadline).toISOString()
+                        : null,
+                categoryId: formData.category
+                    ? Number(formData.category)
+                    : null,
+            };
 
-        // EDIT TASK
-        if (editTask) {
+            if (editTask) {
+                await axios.put(`/tasks/${editTask.id}`, taskData);
 
-            updateTask(
-                editTask.id,
-                taskData
-            );
+                toast.success("Task updated!");
+            } else {
+                await axios.post("/tasks", taskData);
 
-            toast.success(
-                "Task updated!"
-            );
+                toast.success("Task created!");
+            }
 
-        } else {
+            navigate("/dashboard");
 
-            // CREATE TASK
-            addTask(taskData);
-
-            toast.success(
-                "Task created!"
-            );
+        } catch (err) {
+            toast.error("Gagal save task");
+            console.log(err);
         }
-
-        // Reset Form
-        setFormData({
-            title: "",
-            description: "",
-            category: "",
-            hasDeadline: false,
-            deadline: "",
-        });
-
-        // Redirect
-        navigate("/dashboard");
     };
 
     return (
@@ -164,9 +175,9 @@ function TaskForm({ editTask = null }) {
                     {categories.map((category) => (
                         <option
                             key={category.id}
-                            value={category.name}
+                            value={category.id}
                         >
-                            {category.name}
+                            {category.namaCategory}
                         </option>
                     ))}
 
